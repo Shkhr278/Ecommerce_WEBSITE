@@ -1,20 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
-import { Heart, Calendar } from "lucide-react";
+import { Heart, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { EventCard } from "@/components/event-card";
+import { ProductCard } from "@/components/product-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { useLocation } from "wouter";
-import type { Event } from "@shared/schema";
+import type { Product } from "@shared/schema";
 
 export default function FavoritesPage() {
   const [, navigate] = useLocation();
 
-  const { data: favorites = [], isLoading, error } = useQuery<Event[]>({
+  const { data: favorites = [], isLoading, error } = useQuery<Product[]>({
     queryKey: ["/api/favorites"],
   });
 
-  const handleViewDetails = (eventId: string) => {
-    navigate(`/event/${eventId}`);
+  const handleViewDetails = (productId: string) => {
+    navigate(`/product/${productId}`);
   };
 
   return (
@@ -54,15 +54,15 @@ export default function FavoritesPage() {
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No favorites yet</h3>
               <p className="text-sm text-gray-500 mb-4">
-                Start adding events to your favorites to see them here.
+                Start adding products to your favorites to see them here.
               </p>
               <Button 
                 variant="outline" 
                 onClick={() => navigate("/")}
-                data-testid="button-browse-events"
+                data-testid="button-browse-products"
               >
-                <Calendar className="mr-2 h-4 w-4" />
-                Browse Events
+                <Store className="mr-2 h-4 w-4" />
+                Browse Products
               </Button>
             </div>
           )}
@@ -75,10 +75,10 @@ export default function FavoritesPage() {
                 </p>
               </div>
               <div className="space-y-4">
-                {favorites.map((event: Event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
+                {favorites.map((product: Product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
                     onViewDetails={handleViewDetails}
                   />
                 ))}

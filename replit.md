@@ -1,8 +1,8 @@
-# Events Discovery Mobile App
+# E-Commerce Platform for Third-Party Products
 
 ## Overview
 
-This is a mobile-first event discovery application built with React and Express.js. The app allows users to browse local events, filter by category and price, view event details, and manage favorites. It features a responsive design optimized for mobile devices with native-like navigation and user experience.
+This is a mobile-first e-commerce platform built with React and Express.js. The app allows users to browse products by categories, filter by price, view product details, manage shopping cart, and process payments through Stripe. It features a responsive design optimized for mobile devices with native-like navigation and user experience.
 
 ## User Preferences
 

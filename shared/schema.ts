@@ -12,29 +12,36 @@ export const users = pgTable("users", {
   longitude: decimal("longitude", { precision: 11, scale: 8 }),
 });
 
-export const events = pgTable("events", {
+export const products = pgTable("products", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  title: text("title").notNull(),
+  name: text("name").notNull(),
   description: text("description").notNull(),
   category: text("category").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0"),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  originalPrice: decimal("original_price", { precision: 10, scale: 2 }),
   imageUrl: text("image_url").notNull(),
-  location: text("location").notNull(),
-  address: text("address").notNull(),
-  latitude: decimal("latitude", { precision: 10, scale: 8 }).notNull(),
-  longitude: decimal("longitude", { precision: 11, scale: 8 }).notNull(),
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date").notNull(),
-  organizerName: text("organizer_name").notNull(),
-  organizerEmail: text("organizer_email"),
-  maxAttendees: integer("max_attendees"),
+  brand: text("brand"),
+  rating: decimal("rating", { precision: 2, scale: 1 }).default("0"),
+  reviewCount: integer("review_count").default(0),
+  stockQuantity: integer("stock_quantity").notNull().default(0),
+  sku: text("sku"),
+  tags: text("tags").array(),
   isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+});
+
+export const cartItems = pgTable("cart_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  productId: varchar("product_id").notNull().references(() => products.id),
+  quantity: integer("quantity").notNull().default(1),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
 export const favorites = pgTable("favorites", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id),
-  eventId: varchar("event_id").notNull().references(() => events.id),
+  productId: varchar("product_id").notNull().references(() => products.id),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
@@ -42,9 +49,15 @@ export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
 });
 
-export const insertEventSchema = createInsertSchema(events).omit({
+export const insertProductSchema = createInsertSchema(products).omit({
   id: true,
   isActive: true,
+  createdAt: true,
+});
+
+export const insertCartItemSchema = createInsertSchema(cartItems).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertFavoriteSchema = createInsertSchema(favorites).omit({
@@ -54,7 +67,9 @@ export const insertFavoriteSchema = createInsertSchema(favorites).omit({
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
-export type InsertEvent = z.infer<typeof insertEventSchema>;
-export type Event = typeof events.$inferSelect;
+export type InsertProduct = z.infer<typeof insertProductSchema>;
+export type Product = typeof products.$inferSelect;
+export type InsertCartItem = z.infer<typeof insertCartItemSchema>;
+export type CartItem = typeof cartItems.$inferSelect;
 export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
 export type Favorite = typeof favorites.$inferSelect;
