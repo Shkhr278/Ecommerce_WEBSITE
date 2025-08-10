@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { TopNavigation } from "@/components/top-navigation";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import type { Product } from "@shared/schema";
@@ -64,14 +65,15 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="min-h-screen max-w-md mx-auto bg-white shadow-lg relative">
+    <div className="min-h-screen responsive-container bg-white lg:shadow-lg relative">
+      <TopNavigation />
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
+      <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-3 sticky top-0 lg:top-20 z-10">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             <Store className="text-primary h-5 w-5" />
             <div>
-              <h1 className="text-lg font-bold text-gray-900">Products</h1>
+              <h1 className="text-lg lg:text-xl font-bold text-gray-900">Products</h1>
               <p className="text-xs text-neutral-500">Browse our catalog</p>
             </div>
           </div>
@@ -124,8 +126,8 @@ export default function ProductsPage() {
       </section>
 
       {/* Products Feed */}
-      <main className="flex-1 overflow-y-auto pb-20 custom-scrollbar">
-        <div className="px-4 py-4">
+      <main className="flex-1 overflow-y-auto pb-20 lg:pb-4 custom-scrollbar">
+        <div className="px-4 lg:px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Featured Products</h2>
             <span className="text-sm text-neutral-500" data-testid="text-products-count">
@@ -168,7 +170,7 @@ export default function ProductsPage() {
 
           {!productsLoading && !productsError && products.length > 0 && (
             <>
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 {products.map((product: Product) => (
                   <ProductCard
                     key={product.id}

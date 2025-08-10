@@ -3,6 +3,7 @@ import { Heart, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { TopNavigation } from "@/components/top-navigation";
 import { useLocation } from "wouter";
 import type { Product } from "@shared/schema";
 
@@ -18,7 +19,8 @@ export default function FavoritesPage() {
   };
 
   return (
-    <div className="min-h-screen max-w-md mx-auto bg-white shadow-lg relative">
+    <div className="min-h-screen responsive-container bg-white lg:shadow-lg relative">
+      <TopNavigation />
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-4 py-6">
         <div className="flex items-center space-x-3">

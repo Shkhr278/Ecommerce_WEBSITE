@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { TopNavigation } from "@/components/top-navigation";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
@@ -144,7 +145,8 @@ export default function ProductDetailsPage() {
   const priceInfo = formatPrice(product.price, product.originalPrice);
 
   return (
-    <div className="min-h-screen max-w-md mx-auto bg-white shadow-lg relative pb-20">
+    <div className="min-h-screen responsive-container bg-white lg:shadow-lg relative pb-20 lg:pb-4">
+      <TopNavigation />
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 z-10 bg-white/90 backdrop-blur-sm border-b border-gray-200">
         <div className="flex items-center justify-between px-4 py-3">

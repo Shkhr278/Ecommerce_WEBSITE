@@ -3,6 +3,7 @@ import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { TopNavigation } from "@/components/top-navigation";
 import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import type { CartItem, Product } from "@shared/schema";
@@ -75,9 +76,10 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen max-w-md mx-auto bg-white shadow-lg relative pb-20">
+    <div className="min-h-screen responsive-container bg-white lg:shadow-lg relative pb-20 lg:pb-4">
+      <TopNavigation />
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
+      <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-3 sticky top-0 lg:top-20 z-10">
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"

@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 export function BottomNavigation() {
   const [location] = useLocation();
 
-  const { data: cartItems = [] } = useQuery({
+  const { data: cartItems = [] } = useQuery<any[]>({
     queryKey: ["/api/cart"],
   });
 
@@ -42,7 +42,7 @@ export function BottomNavigation() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 px-4 py-2 z-10">
+    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full responsive-container bg-white border-t border-gray-200 px-4 py-2 z-10 lg:hidden">
       <div className="flex items-center justify-around">
         {navItems.map(({ icon: Icon, label, path, testId, badge }) => {
           const isActive = location === path;
