@@ -36,12 +36,7 @@ export default function ProfilePage() {
               <p className="text-sm text-gray-500" data-testid="text-user-email">
                 owner@business.com
               </p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mt-3"
-                data-testid="button-edit-profile"
-              >
+              <Button variant="outline" size="sm" className="mt-3" data-testid="button-edit-profile">
                 Edit Profile
               </Button>
             </CardContent>
@@ -54,9 +49,7 @@ export default function ProfilePage() {
                 <CardContent className="p-0">
                   <Button
                     variant="ghost"
-                    className={`w-full justify-start p-4 h-auto ${
-                      variant === "destructive" ? "text-red-600 hover:text-red-700 hover:bg-red-50" : ""
-                    }`}
+                    className={`w-full justify-start p-4 h-auto ${variant === "destructive" ? "text-red-600 hover:text-red-700 hover:bg-red-50" : ""}`}
                     data-testid={testId}
                   >
                     <Icon className="h-5 w-5 mr-3" />

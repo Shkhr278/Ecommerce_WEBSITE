@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Store, Search, Filter, Plus, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,11 @@ import { BottomNavigation } from "@/components/bottom-navigation";
 import { TopNavigation } from "@/components/top-navigation";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import type { Product } from "@shared/schema";
 
 export default function ProductsPage() {
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
 
@@ -32,7 +31,7 @@ export default function ProductsPage() {
   const queryParams = new URLSearchParams();
   if (searchQuery) queryParams.append("search", searchQuery);
 
-  const activeFilterData = filters.find(f => f.id === activeFilter);
+  const activeFilterData = filters.find((f) => f.id === activeFilter);
   if (activeFilterData?.type === "category" && activeFilter !== "all") {
     queryParams.append("category", activeFilter);
   }
@@ -40,27 +39,26 @@ export default function ProductsPage() {
     queryParams.append("maxPrice", activeFilterData.maxPrice?.toString() || "");
   }
 
-  const { 
-    data: products = [], 
-    isLoading: productsLoading, 
-    error: productsError 
-  } = useQuery<Product[]>({
-    queryKey: ["/api/products?" + queryParams.toString()],
-    enabled: true,
+  const productsUrl =
+    "/api/products" + (queryParams.toString() ? `?${queryParams.toString()}` : "");
+
+  const {
+    data: products = [],
+    isLoading: productsLoading,
+    error: productsError,
+  } = useQuery({
+    queryKey: [productsUrl],
   });
 
-
-
-  const handleFilterClick = (filterId: string) => {
+  const handleFilterClick = (filterId) => {
     setActiveFilter(filterId);
   };
 
-  const handleViewDetails = (productId: string) => {
+  const handleViewDetails = (productId) => {
     navigate(`/product/${productId}`);
   };
 
   const handleLoadMore = () => {
-    // In a real app, you'd implement pagination
     console.log("Load more products");
   };
 
@@ -138,8 +136,8 @@ export default function ProductsPage() {
           {productsError && (
             <div className="text-center py-8">
               <p className="text-red-600 mb-2">Failed to load products</p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/products"] })}
                 data-testid="button-retry-products"
               >
@@ -171,12 +169,8 @@ export default function ProductsPage() {
           {!productsLoading && !productsError && products.length > 0 && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                {products.map((product: Product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onViewDetails={handleViewDetails}
-                  />
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} onViewDetails={handleViewDetails} />
                 ))}
               </div>
 

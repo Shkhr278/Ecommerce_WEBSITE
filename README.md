@@ -1,86 +1,101 @@
-### README.md (Merged & Sleek)
+# **Full-Stack E-Commerce + Event Platform**
 
-# Full-Stack E-Commerce + Event Platform (React + Express + Drizzle)
+### *React + Express + Drizzle + PostgreSQL*
 
-A mobile-first full-stack web application built with React (Vite) on the frontend and Express.js on the backend. It supports e-commerce features, event listings, authentication, session management, and PostgreSQL via Drizzle ORM. The application is optimized for production with Vite, esbuild, and includes WebSocket support.
-
----
-
-## Features
-
-* Mobile-first React frontend with Tailwind CSS and shadcn/ui
-* Lightweight routing using Wouter
-* Express.js backend with session-based authentication
-* Drizzle ORM + PostgreSQL (Neon)
-* Product listing, filtering, categories, and detail pages
-* Event listing with category, price, search & geolocation filters
-* Favorites system tied to user sessions
-* WebSocket integration
-* Production-ready client + server builds
+A modern, mobile-first full-stack application combining **e-commerce**, **events**, **user favorites**, and **session-based authentication**.
+Built with **React (Vite)** on the frontend and **Express.js + Drizzle ORM** on the backend.
 
 ---
 
-## Tech Stack
+## **✨ Features**
 
-### Frontend
+* Mobile-optimized custom UI with **Tailwind CSS** & **shadcn/ui**
+* Client routing using **Wouter**
+* **Session-based authentication** with PostgreSQL store
+* Complete **E-Commerce Module**
+  – Products, filtering, search, categories, cart, favorites
+* Complete **Event Module**
+  – Event listings, search, categories, pricing, geolocation filters
+* **Favorites system** synced with session
+* **WebSocket** enabled backend
+* Optimized builds (Vite + esbuild)
+* Shared schema via **Drizzle + Zod**
+* Clean folder structure with strict aliasing
 
-* React 18 + TypeScript
+---
+
+## **🧱 Tech Stack Overview**
+
+### **Frontend**
+
+* React 18
 * Vite
 * Tailwind CSS
-* shadcn/ui + Radix UI
+* shadcn/ui + Radix UI primitives
 * TanStack Query (React Query)
 * Wouter
 * React Hook Form + Zod
+* TypeScript
 
-### Backend
+### **Backend**
 
 * Node.js + Express.js
 * TypeScript
-* RESTful APIs
-* connect-pg-simple (PostgreSQL session storage)
-* WebSocket support
+* REST APIs
+* WebSocket server
+* connect-pg-simple (session store)
 
-### Database
+### **Database**
 
-* PostgreSQL (Neon)
-* Drizzle ORM + Drizzle-Zod
-* Schema includes:
-
-  * Users (auth + location)
-  * Events (metadata, pricing, geolocation)
-  * Favorites (user-event relations)
+* PostgreSQL (Neon recommended)
+* Drizzle ORM
+* Drizzle-Zod validation
+* Shared schema between client/server
 
 ---
 
-## API Endpoints
+## **📡 API Endpoints**
 
-* `GET /api/events` – List events with filters
-* `GET /api/events/:id` – Event details
-* `POST /api/favorites` – Add favorite
-* `DELETE /api/favorites/:id` – Remove favorite
-* `GET /api/favorites/:id/check` – Check favorite status
+### **Events**
 
----
+* `GET /api/events` – list events with filters
+* `GET /api/events/:id` – single event details
 
-## Setup
+### **Favorites**
 
-1. Clone the repository
-2. Install dependencies:
+* `POST /api/favorites` – add to favorites
+* `DELETE /api/favorites/:id` – remove
+* `GET /api/favorites/:id/check` – check favorite status
 
-   ```
-   npm install
-   ```
-3. Add environment variables:
+### **Products**
 
-   * `DATABASE_URL`
-   * `SESSION_SECRET`
-   * `PORT` (optional)
+* `GET /api/products` – list products
+* `GET /api/products/:id` – product details
+* `POST /api/cart` – add to cart
+* `PUT /api/cart/:id` – update quantity
+* `DELETE /api/cart/:id` – remove
 
 ---
 
-## Development
+## **⚙️ Setup**
 
-Start dev server (Express + Vite HMR):
+### **1. Install dependencies**
+
+```
+npm install
+```
+
+### **2. Add environment variables**
+
+* `DATABASE_URL`
+* `SESSION_SECRET`
+* `PORT` (optional)
+
+---
+
+## **🧑‍💻 Development**
+
+Start full dev environment (Express + Vite HMR):
 
 ```
 npm run dev
@@ -88,7 +103,7 @@ npm run dev
 
 ---
 
-## Build
+## **📦 Build**
 
 Production build:
 
@@ -96,33 +111,40 @@ Production build:
 npm run build
 ```
 
-Starts Vite build for client and esbuild bundling for server.
+This generates:
+
+* `/dist/public` – built React app
+* `/dist/server` – bundled Express server
 
 ---
 
-## Production
+## **🚀 Production**
 
 ```
-npm run start
+npm start
 ```
+
+Starts the compiled Express server + serves built client.
 
 ---
 
-## Database
+## **🗄️ Database Commands**
+
+Push schema updates:
 
 ```
 npm run db:push
 ```
 
-Push schema changes to PostgreSQL.
-
 ---
 
-## Project Structure
+## **📁 Project Structure**
 
-* `client/` – React frontend
-* `server/` – Express backend
-* `shared/` – Shared types, schemas
-* `dist/` – Production output
+```
+client/   – React frontend
+server/   – Express backend
+shared/   – Shared types + Drizzle schema
+dist/     – Production output
+```
 
 ---

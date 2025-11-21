@@ -11,34 +11,13 @@ export function BottomNavigation() {
     queryKey: ["/api/cart"],
   });
 
-  const cartItemCount = cartItems.length;
+  const cartItemCount = Array.isArray(cartItems) ? cartItems.length : 0;
 
   const navItems = [
-    { 
-      icon: Store, 
-      label: "Products", 
-      path: "/", 
-      testId: "nav-products"
-    },
-    { 
-      icon: ShoppingCart, 
-      label: "Cart", 
-      path: "/cart", 
-      testId: "nav-cart",
-      badge: cartItemCount > 0 ? cartItemCount : null
-    },
-    { 
-      icon: Heart, 
-      label: "Favorites", 
-      path: "/favorites", 
-      testId: "nav-favorites"
-    },
-    { 
-      icon: User, 
-      label: "Profile", 
-      path: "/profile", 
-      testId: "nav-profile"
-    },
+    { icon: Store, label: "Products", path: "/", testId: "nav-products" },
+    { icon: ShoppingCart, label: "Cart", path: "/cart", testId: "nav-cart", badge: cartItemCount > 0 ? cartItemCount : null },
+    { icon: Heart, label: "Favorites", path: "/favorites", testId: "nav-favorites" },
+    { icon: User, label: "Profile", path: "/profile", testId: "nav-profile" },
   ];
 
   return (
@@ -46,16 +25,14 @@ export function BottomNavigation() {
       <div className="flex items-center justify-around">
         {navItems.map(({ icon: Icon, label, path, testId, badge }) => {
           const isActive = location === path;
-          
+
           return (
             <Link key={path} href={path}>
               <Button
                 variant="ghost"
                 className={cn(
                   "flex flex-col items-center py-2 px-3 h-auto min-w-0 transition-colors relative",
-                  isActive 
-                    ? "text-primary" 
-                    : "text-neutral-500 hover:text-primary"
+                  isActive ? "text-primary" : "text-neutral-500 hover:text-primary"
                 )}
                 data-testid={testId}
               >
@@ -63,7 +40,7 @@ export function BottomNavigation() {
                   <Icon className="h-5 w-5 mb-1" />
                   {badge && (
                     <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                      {badge > 9 ? '9+' : badge}
+                      {badge > 9 ? "9+" : badge}
                     </div>
                   )}
                 </div>

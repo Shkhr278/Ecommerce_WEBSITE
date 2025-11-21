@@ -1,47 +1,63 @@
+import "dotenv/config";
 import express from "express";
 import session from "express-session";
 import passport from "passport";
 import { createServer } from "http";
-import { parse } from "url";
 import { WebSocketServer } from "ws";
 import { routes } from "./routes.js";
-import { storage } from "./storage.js";
 
 const app = express();
 const server = createServer(app);
 
-const wss = new WebSocketServer({ server });
+// WebSocket server (simple echo on /ws)
+const wss = new WebSocketServer({ noServer: true });
 
-wss.on("connection", (ws, req) => {
-  const { pathname } = parse(req.url || "", true);
-
-  if (pathname === "/ws") {
-    ws.on("message", (message) => {
-      // Handle WebSocket messages
-      console.log("Received message:", message.toString());
-      ws.send("Echo: " + message.toString());
+server.on("upgrade", (request, socket, head) => {
+  const { url } = request;
+  if (url && url.startsWith("/ws")) {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit("connection", ws, request);
     });
-
-    ws.on("close", () => {
-      console.log("WebSocket connection closed");
-    });
+  } else {
+    socket.destroy();
   }
 });
 
+wss.on("connection", (ws, req) => {
+  ws.on("message", (message) => {
+    console.log("Received message:", message.toString());
+    try {
+      ws.send("Echo: " + message.toString());
+    } catch (err) {
+      // ignore send errors for now
+    }
+  });
+
+  ws.on("close", () => {
+    console.log("WebSocket connection closed");
+  });
+});
+
+// middleware
 app.use(express.json());
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false },
+    cookie: { secure: false }, // set to true behind HTTPS
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
 
+// mount API routes
 app.use("/api", routes);
+
+// health check
+app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 const port = process.env.PORT || 5000;
 

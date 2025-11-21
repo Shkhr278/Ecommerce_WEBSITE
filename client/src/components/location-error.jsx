@@ -1,14 +1,7 @@
 import { AlertTriangle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface LocationErrorProps {
-  isVisible: boolean;
-  error: string;
-  onRetry: () => void;
-  onDismiss: () => void;
-}
-
-export function LocationError({ isVisible, error, onRetry, onDismiss }: LocationErrorProps) {
+export function LocationError({ isVisible, error, onRetry, onDismiss }) {
   if (!isVisible) return null;
 
   return (

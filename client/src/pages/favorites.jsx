@@ -5,16 +5,15 @@ import { ProductCard } from "@/components/product-card";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { TopNavigation } from "@/components/top-navigation";
 import { useLocation } from "wouter";
-import type { Product } from "@shared/schema";
 
 export default function FavoritesPage() {
   const [, navigate] = useLocation();
 
-  const { data: favorites = [], isLoading, error } = useQuery<Product[]>({
+  const { data: favorites = [], isLoading, error } = useQuery({
     queryKey: ["/api/favorites"],
   });
 
-  const handleViewDetails = (productId: string) => {
+  const handleViewDetails = (productId) => {
     navigate(`/product/${productId}`);
   };
 
@@ -55,14 +54,8 @@ export default function FavoritesPage() {
                 <Heart className="h-8 w-8 text-gray-400" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No favorites yet</h3>
-              <p className="text-sm text-gray-500 mb-4">
-                Start adding products to your favorites to see them here.
-              </p>
-              <Button 
-                variant="outline" 
-                onClick={() => navigate("/")}
-                data-testid="button-browse-products"
-              >
+              <p className="text-sm text-gray-500 mb-4">Start adding products to your favorites to see them here.</p>
+              <Button variant="outline" onClick={() => navigate("/")} data-testid="button-browse-products">
                 <Store className="mr-2 h-4 w-4" />
                 Browse Products
               </Button>
@@ -73,16 +66,12 @@ export default function FavoritesPage() {
             <>
               <div className="mb-4">
                 <p className="text-sm text-gray-600" data-testid="text-favorites-count">
-                  {favorites.length} favorite{favorites.length !== 1 ? 's' : ''}
+                  {favorites.length} favorite{favorites.length !== 1 ? "s" : ""}
                 </p>
               </div>
               <div className="space-y-4">
-                {favorites.map((product: Product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onViewDetails={handleViewDetails}
-                  />
+                {favorites.map((product) => (
+                  <ProductCard key={product.id} product={product} onViewDetails={handleViewDetails} />
                 ))}
               </div>
             </>

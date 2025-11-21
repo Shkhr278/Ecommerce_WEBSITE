@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { apiRequest } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
-import type { Event } from "@shared/schema";
 
 export default function EventDetailsPage() {
   const { id } = useParams();
@@ -14,12 +13,12 @@ export default function EventDetailsPage() {
   const queryClient = useQueryClient();
 
   const { data: event, isLoading, error } = useQuery({
-    queryKey: ["/api/events", id],
+    queryKey: [id ? `/api/events/${id}` : "/api/events"],
     enabled: !!id,
   });
 
-  const { data: favoriteData } = useQuery<{ isFavorite: boolean }>({
-    queryKey: ["/api/favorites", id, "check"],
+  const { data: favoriteData } = useQuery({
+    queryKey: [id ? `/api/favorites/${id}/check` : "/api/favorites"],
     enabled: !!id,
   });
 
@@ -35,7 +34,7 @@ export default function EventDetailsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/favorites"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/favorites", id, "check"] });
+      queryClient.invalidateQueries({ queryKey: [id ? `/api/favorites/${id}/check` : ""] });
     },
   });
 
@@ -80,32 +79,30 @@ export default function EventDetailsPage() {
     );
   }
 
-  const eventData = event as Event;
+  const eventData = event;
 
-  const formatPrice = (price: string) => {
+  const formatPrice = (price) => {
     const priceNum = parseFloat(price);
     return priceNum === 0 ? "Free" : `$${priceNum}`;
   };
 
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-  };
 
-  const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString("en-US", {
+  const formatTime = (date) =>
+    new Date(date).toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
     });
-  };
 
-  const getCategoryColor = (category: string) => {
-    switch (category.toLowerCase()) {
+  const getCategoryColor = (category) => {
+    switch ((category || "").toLowerCase()) {
       case "networking":
         return "bg-secondary/10 text-secondary";
       case "workshop":
@@ -123,11 +120,7 @@ export default function EventDetailsPage() {
     <div className="min-h-screen max-w-md mx-auto bg-white shadow-lg">
       {/* Header */}
       <header className="relative">
-        <img
-          src={eventData.imageUrl}
-          alt={eventData.title}
-          className="w-full h-64 object-cover"
-        />
+        <img src={eventData.imageUrl} alt={eventData.title} className="w-full h-64 object-cover" />
         <div className="absolute top-4 left-4 right-4 flex justify-between">
           <Button
             variant="secondary"
@@ -143,16 +136,11 @@ export default function EventDetailsPage() {
             size="sm"
             className="bg-white/90 backdrop-blur-sm p-2"
             onClick={handleToggleFavorite}
-            disabled={toggleFavoriteMutation.isPending}
+            disabled={toggleFavoriteMutation.isLoading}
             data-testid="button-favorite"
           >
             <Heart
-              className={cn(
-                "h-4 w-4",
-                isFavorite 
-                  ? "fill-red-500 text-red-500" 
-                  : "text-gray-600"
-              )}
+              className={cn("h-4 w-4", isFavorite ? "fill-red-500 text-red-500" : "text-gray-600")}
             />
           </Button>
         </div>
@@ -161,10 +149,7 @@ export default function EventDetailsPage() {
       {/* Content */}
       <main className="p-4 pb-8">
         <div className="mb-4">
-          <Badge 
-            variant="secondary" 
-            className={cn("mb-3", getCategoryColor(eventData.category))}
-          >
+          <Badge variant="secondary" className={cn("mb-3", getCategoryColor(eventData.category))}>
             {eventData.category}
           </Badge>
           <h1 className="text-2xl font-bold text-gray-900 mb-2" data-testid="text-event-title">
@@ -201,7 +186,7 @@ export default function EventDetailsPage() {
 
             <div className="flex items-center">
               <Tag className="mr-3 h-5 w-5 text-gray-500 flex-shrink-0" />
-              <span 
+              <span
                 className={cn(
                   "font-medium text-lg",
                   parseFloat(eventData.price) === 0 ? "text-secondary" : "text-gray-900"
@@ -247,11 +232,7 @@ export default function EventDetailsPage() {
               {eventData.organizerEmail && (
                 <div className="flex items-center">
                   <Mail className="mr-3 h-4 w-4 text-gray-500" />
-                  <a 
-                    href={`mailto:${eventData.organizerEmail}`}
-                    className="text-primary hover:underline"
-                    data-testid="link-organizer-email"
-                  >
+                  <a href={`mailto:${eventData.organizerEmail}`} className="text-primary hover:underline">
                     {eventData.organizerEmail}
                   </a>
                 </div>
@@ -261,10 +242,7 @@ export default function EventDetailsPage() {
         </Card>
 
         {/* Action Button */}
-        <Button 
-          className="w-full bg-primary text-white hover:bg-primary/90 py-3 text-lg"
-          data-testid="button-register"
-        >
+        <Button className="w-full bg-primary text-white hover:bg-primary/90 py-3 text-lg" data-testid="button-register">
           Register for Event
         </Button>
       </main>
