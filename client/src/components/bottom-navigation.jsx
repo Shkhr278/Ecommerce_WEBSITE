@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 export function BottomNavigation() {
   const [location] = useLocation();
 
-  const { data: cartItems = [] } = useQuery<any[]>({
+  const { data: cartItems = [] } = useQuery({
     queryKey: ["/api/cart"],
   });
 
