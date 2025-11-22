@@ -1,14 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
 
-// Backend base URL:
-// - In production: set VITE_API_BASE_URL in Vercel (e.g. https://your-backend.onrender.com)
-// - In development: falls back to http://localhost:8000
-const API_BASE_URL =
-  (typeof import.meta !== "undefined" &&
-    import.meta.env &&
-    import.meta.env.VITE_API_BASE_URL) ||
-  "http://localhost:8000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
+// Helper: throw on non-2xx
 async function throwIfResNotOk(res) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -16,7 +10,7 @@ async function throwIfResNotOk(res) {
   }
 }
 
-// For POST / PUT / DELETE etc.
+// Generic request helper for mutations (POST/PUT/DELETE)
 export async function apiRequest(method, path, body) {
   const url = path.startsWith("http") ? path : API_BASE_URL + path;
 
@@ -28,31 +22,22 @@ export async function apiRequest(method, path, body) {
   });
 
   await throwIfResNotOk(res);
-  // Callers don't currently use the response body, so return the Response
-  return res;
+
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
 /**
- * Returns a react-query queryFn which expects `queryKey` to be an array
- * where the first element is the URL (or URL parts).
- *
- * options.on401: "returnNull" | "throw"
+ * queryFn for react-query.
+ * Expects queryKey like: ["/api/cart"] or ["/api/products?search=foo"]
  */
 export function getQueryFn({ on401 = "throw" } = {}) {
   return async ({ queryKey } = {}) => {
-    // Normalize queryKey -> url string
-    let url = "";
+    const first = Array.isArray(queryKey) ? queryKey[0] : queryKey;
+    const rawUrl = typeof first === "string" ? first : "";
+    const url = rawUrl.startsWith("http") ? rawUrl : API_BASE_URL + rawUrl;
 
-    if (Array.isArray(queryKey)) {
-      // Your code usually passes single-element arrays like ["/api/products?..."]
-      url = queryKey.join("");
-    } else if (queryKey != null) {
-      url = String(queryKey);
-    }
-
-    const finalUrl = url.startsWith("http") ? url : API_BASE_URL + url;
-
-    const res = await fetch(finalUrl, {
+    const res = await fetch(url, {
       credentials: "include",
     });
 
