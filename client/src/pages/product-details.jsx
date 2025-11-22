@@ -1,6 +1,15 @@
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Heart, Star, ShoppingCart, Package, Tag, Plus, Minus } from "lucide-react";
+import {
+  ArrowLeft,
+  Heart,
+  Star,
+  ShoppingCart,
+  Package,
+  Tag,
+  Plus,
+  Minus,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +27,11 @@ export default function ProductDetailsPage() {
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
 
-  const { data: product, isLoading, error } = useQuery({
+  const {
+    data: product,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: [id ? `/api/products/${id}` : "/api/products"],
     enabled: !!id,
   });
@@ -40,10 +53,14 @@ export default function ProductDetailsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/favorites"] });
-      queryClient.invalidateQueries({ queryKey: [id ? `/api/favorites/${id}/check` : ""] });
+      queryClient.invalidateQueries({
+        queryKey: [id ? `/api/favorites/${id}/check` : ""],
+      });
       toast({
         title: isFavorite ? "Removed from favorites" : "Added to favorites",
-        description: isFavorite ? "Product removed from your favorites" : "Product added to your favorites",
+        description: isFavorite
+          ? "Product removed from your favorites"
+          : "Product added to your favorites",
       });
     },
   });
@@ -81,7 +98,11 @@ export default function ProductDetailsPage() {
       return {
         current: formattedPrice,
         original: `$${parseFloat(originalPrice).toFixed(2)}`,
-        discount: Math.round(((parseFloat(originalPrice) - currentPrice) / parseFloat(originalPrice)) * 100),
+        discount: Math.round(
+          ((parseFloat(originalPrice) - currentPrice) /
+            parseFloat(originalPrice)) *
+            100
+        ),
       };
     }
 
@@ -127,8 +148,12 @@ export default function ProductDetailsPage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Product not found</h3>
-            <p className="text-sm text-gray-500 mb-4">The product you're looking for doesn't exist or has been removed.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Product not found
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">
+              The product you're looking for doesn't exist or has been removed.
+            </p>
             <Button onClick={handleBack} data-testid="button-back-to-products">
               Back to Products
             </Button>
@@ -142,30 +167,46 @@ export default function ProductDetailsPage() {
   const priceInfo = formatPrice(product.price, product.originalPrice);
 
   return (
-    <div className="min-h-screen responsive-container bg-white lg:shadow-lg relative pb-20 lg:pb-4">
+    <div className="min-h-screen max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 bg-white lg:shadow-lg relative pb-20 lg:pb-4 lg:pt-16">
       <TopNavigation />
-      {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-10 bg-white/90 backdrop-blur-sm border-b border-gray-200">
-        <div className="flex items-center justify-between px-4 py-3">
-          <Button variant="ghost" size="sm" onClick={handleBack} className="p-2 bg-white/80 hover:bg-white" data-testid="button-back">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleToggleFavorite}
-            disabled={toggleFavoriteMutation.isLoading}
-            className="p-2 bg-white/80 hover:bg-white"
-            data-testid="button-favorite"
-          >
-            <Heart className={cn("h-5 w-5 transition-colors", isFavorite ? "fill-red-500 text-red-500" : "text-neutral-500 hover:text-red-500")} />
-          </Button>
-        </div>
+
+      {/* Header (below top nav on lg) */}
+      <header className="sticky top-0 lg:top-16 z-10 bg-white border-b border-gray-200 py-4 px-3 flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleBack}
+          className="p-2"
+          data-testid="button-back"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleToggleFavorite}
+          disabled={toggleFavoriteMutation.isLoading}
+          className="p-2"
+          data-testid="button-favorite"
+        >
+          <Heart
+            className={cn(
+              "h-5 w-5 transition-colors",
+              isFavorite
+                ? "fill-red-500 text-red-500"
+                : "text-neutral-500 hover:text-red-500"
+            )}
+          />
+        </Button>
       </header>
 
       {/* Product Image */}
       <div className="relative">
-        <img src={product.imageUrl} alt={product.name} className="w-full h-80 object-cover" />
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className="w-full h-80 object-cover"
+        />
         {priceInfo.discount > 0 && (
           <div className="absolute top-16 left-4">
             <Badge variant="destructive" className="text-sm font-medium">
@@ -179,14 +220,27 @@ export default function ProductDetailsPage() {
       <div className="p-4 space-y-4">
         {/* Category and Brand */}
         <div className="flex items-center justify-between">
-          <Badge variant="secondary" className={cn("text-sm font-medium", getCategoryColor(product.category))}>
+          <Badge
+            variant="secondary"
+            className={cn(
+              "text-sm font-medium",
+              getCategoryColor(product.category)
+            )}
+          >
             {product.category}
           </Badge>
-          {product.brand && <span className="text-sm text-neutral-500 font-medium">{product.brand}</span>}
+          {product.brand && (
+            <span className="text-sm text-neutral-500 font-medium">
+              {product.brand}
+            </span>
+          )}
         </div>
 
         {/* Product Name */}
-        <h1 className="text-2xl font-bold text-gray-900" data-testid="text-product-name">
+        <h1
+          className="text-2xl font-bold text-gray-900"
+          data-testid="text-product-name"
+        >
           {product.name}
         </h1>
 
@@ -195,12 +249,18 @@ export default function ProductDetailsPage() {
           <div className="flex items-center space-x-2">
             <div className="flex items-center">
               <Star className="h-5 w-5 text-yellow-400 fill-current" />
-              <span className="ml-1 font-medium text-gray-900" data-testid="text-product-rating">
+              <span
+                className="ml-1 font-medium text-gray-900"
+                data-testid="text-product-rating"
+              >
                 {product.rating}
               </span>
             </div>
             {product.reviewCount && product.reviewCount > 0 && (
-              <span className="text-sm text-neutral-500" data-testid="text-product-reviews">
+              <span
+                className="text-sm text-neutral-500"
+                data-testid="text-product-reviews"
+              >
                 ({product.reviewCount} reviews)
               </span>
             )}
@@ -209,24 +269,42 @@ export default function ProductDetailsPage() {
 
         {/* Price */}
         <div className="flex items-center space-x-3">
-          <span className="text-3xl font-bold text-primary" data-testid="text-product-price">
+          <span
+            className="text-3xl font-bold text-primary"
+            data-testid="text-product-price"
+          >
             {priceInfo.current}
           </span>
-          {priceInfo.original && <span className="text-lg text-gray-500 line-through">{priceInfo.original}</span>}
+          {priceInfo.original && (
+            <span className="text-lg text-gray-500 line-through">
+              {priceInfo.original}
+            </span>
+          )}
         </div>
 
         {/* Stock Status */}
         <div className="flex items-center space-x-2">
           <Package className="h-4 w-4 text-gray-500" />
-          <span className={cn("text-sm font-medium", product.stockQuantity > 0 ? "text-green-600" : "text-red-600")} data-testid="text-stock-status">
-            {product.stockQuantity > 0 ? `${product.stockQuantity} in stock` : "Out of stock"}
+          <span
+            className={cn(
+              "text-sm font-medium",
+              product.stockQuantity > 0 ? "text-green-600" : "text-red-600"
+            )}
+            data-testid="text-stock-status"
+          >
+            {product.stockQuantity > 0
+              ? `${product.stockQuantity} in stock`
+              : "Out of stock"}
           </span>
         </div>
 
         {/* Description */}
         <div>
           <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-          <p className="text-gray-600 leading-relaxed" data-testid="text-product-description">
+          <p
+            className="text-gray-600 leading-relaxed"
+            data-testid="text-product-description"
+          >
             {product.description}
           </p>
         </div>
@@ -252,21 +330,52 @@ export default function ProductDetailsPage() {
               <div className="flex items-center justify-between mb-4">
                 <span className="font-medium text-gray-900">Quantity</span>
                 <div className="flex items-center space-x-3">
-                  <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={quantity <= 1} data-testid="button-decrease-quantity">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1}
+                    data-testid="button-decrease-quantity"
+                  >
                     <Minus className="h-4 w-4" />
                   </Button>
-                  <span className="w-8 text-center font-medium" data-testid="text-quantity">
+                  <span
+                    className="w-8 text-center font-medium"
+                    data-testid="text-quantity"
+                  >
                     {quantity}
                   </span>
-                  <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))} disabled={quantity >= product.stockQuantity} data-testid="button-increase-quantity">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() =>
+                      setQuantity(
+                        Math.min(product.stockQuantity, quantity + 1)
+                      )
+                    }
+                    disabled={quantity >= product.stockQuantity}
+                    data-testid="button-increase-quantity"
+                  >
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
-              <Button className="w-full bg-primary text-white hover:bg-primary/90" onClick={handleAddToCart} disabled={addToCartMutation.isLoading} data-testid="button-add-to-cart">
+              <Button
+                className="w-full bg-primary text-white hover:bg-primary/90"
+                onClick={handleAddToCart}
+                disabled={addToCartMutation.isLoading}
+                data-testid="button-add-to-cart"
+              >
                 <ShoppingCart className="h-4 w-4 mr-2" />
-                Add to Cart - {formatPrice((parseFloat(product.price) * quantity).toString()).current}
+                Add to Cart –{" "}
+                {
+                  formatPrice(
+                    (parseFloat(product.price) * quantity).toString()
+                  ).current
+                }
               </Button>
             </CardContent>
           </Card>

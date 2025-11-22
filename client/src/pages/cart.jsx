@@ -11,7 +11,11 @@ export default function CartPage() {
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
 
-  const { data: cartItems = [], isLoading, error } = useQuery({
+  const {
+    data: cartItems = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["/api/cart"],
   });
 
@@ -43,7 +47,10 @@ export default function CartPage() {
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + parseFloat(item.product.price) * item.quantity, 0);
+    return cartItems.reduce(
+      (total, item) => total + parseFloat(item.product.price) * item.quantity,
+      0
+    );
   };
 
   const formatPrice = (price) => `$${price.toFixed(2)}`;
@@ -66,20 +73,25 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen responsive-container bg-white lg:shadow-lg relative pb-20 lg:pb-4">
+    <div className="min-h-screen max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 bg-white lg:shadow-lg relative pb-20 lg:pb-4 lg:pt-16">
       <TopNavigation />
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-3 sticky top-0 lg:top-20 z-10">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={handleGoBack} className="p-2" data-testid="button-back">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center space-x-2">
-            <ShoppingCart className="h-5 w-5 text-primary" />
-            <h1 className="text-lg font-bold text-gray-900">Shopping Cart</h1>
-          </div>
-          <div className="w-9" />
+
+      {/* Header (below top nav on lg) */}
+      <header className=" top-0 lg:top-16 z-10 bg-white border-b border-gray-200 py-4 flex items-center justify-between px-3">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleGoBack}
+          className="p-2"
+          data-testid="button-back"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div className="flex items-center space-x-2">
+          <ShoppingCart className="h-5 w-5 text-primary" />
+          <h1 className="text-lg font-bold text-gray-900">Shopping Cart</h1>
         </div>
+        <div className="w-9" />
       </header>
 
       {/* Cart Content */}
@@ -87,7 +99,13 @@ export default function CartPage() {
         {error && (
           <div className="text-center py-8">
             <p className="text-red-600 mb-2">Failed to load cart</p>
-            <Button variant="outline" onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/cart"] })} data-testid="button-retry-cart">
+            <Button
+              variant="outline"
+              onClick={() =>
+                queryClient.invalidateQueries({ queryKey: ["/api/cart"] })
+              }
+              data-testid="button-retry-cart"
+            >
               Try Again
             </Button>
           </div>
@@ -98,8 +116,12 @@ export default function CartPage() {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <ShoppingCart className="h-8 w-8 text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
-            <p className="text-sm text-gray-500 mb-4">Add some products to get started!</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Your cart is empty
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Add some products to get started!
+            </p>
             <Button onClick={handleGoBack} data-testid="button-continue-shopping">
               Continue Shopping
             </Button>
@@ -113,27 +135,76 @@ export default function CartPage() {
                 <Card key={item.id} className="border border-gray-200">
                   <CardContent className="p-4">
                     <div className="flex space-x-3">
-                      <img src={item.product.imageUrl} alt={item.product.name} className="w-16 h-16 object-cover rounded-lg" />
+                      <img
+                        src={item.product.imageUrl}
+                        alt={item.product.name}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 truncate" data-testid={`text-product-name-${item.product.id}`}>
+                        <h3
+                          className="font-medium text-gray-900 truncate"
+                          data-testid={`text-product-name-${item.product.id}`}
+                        >
                           {item.product.name}
                         </h3>
-                        <p className="text-sm text-gray-500 truncate">{item.product.category}</p>
+                        <p className="text-sm text-gray-500 truncate">
+                          {item.product.category}
+                        </p>
                         <div className="flex items-center justify-between mt-2">
-                          <span className="font-bold text-primary" data-testid={`text-product-price-${item.product.id}`}>
+                          <span
+                            className="font-bold text-primary"
+                            data-testid={`text-product-price-${item.product.id}`}
+                          >
                             {formatPrice(parseFloat(item.product.price))}
                           </span>
                           <div className="flex items-center space-x-2">
-                            <Button variant="outline" size="sm" className="p-1 h-8 w-8" onClick={() => updateQuantity(item.product.id, item.quantity - 1)} disabled={updateQuantityMutation.isLoading || item.quantity <= 1} data-testid={`button-decrease-quantity-${item.product.id}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="p-1 h-8 w-8"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  item.quantity - 1
+                                )
+                              }
+                              disabled={
+                                updateQuantityMutation.isLoading ||
+                                item.quantity <= 1
+                              }
+                              data-testid={`button-decrease-quantity-${item.product.id}`}
+                            >
                               <Minus className="h-3 w-3" />
                             </Button>
-                            <span className="w-8 text-center text-sm font-medium" data-testid={`text-quantity-${item.product.id}`}>
+                            <span
+                              className="w-8 text-center text-sm font-medium"
+                              data-testid={`text-quantity-${item.product.id}`}
+                            >
                               {item.quantity}
                             </span>
-                            <Button variant="outline" size="sm" className="p-1 h-8 w-8" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} disabled={updateQuantityMutation.isLoading} data-testid={`button-increase-quantity-${item.product.id}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="p-1 h-8 w-8"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  item.quantity + 1
+                                )
+                              }
+                              disabled={updateQuantityMutation.isLoading}
+                              data-testid={`button-increase-quantity-${item.product.id}`}
+                            >
                               <Plus className="h-3 w-3" />
                             </Button>
-                            <Button variant="ghost" size="sm" className="p-1 h-8 w-8 text-red-500 hover:text-red-700" onClick={() => removeItem(item.product.id)} disabled={removeItemMutation.isLoading} data-testid={`button-remove-item-${item.product.id}`}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="p-1 h-8 w-8 text-red-500 hover:text-red-700"
+                              onClick={() => removeItem(item.product.id)}
+                              disabled={removeItemMutation.isLoading}
+                              data-testid={`button-remove-item-${item.product.id}`}
+                            >
                               <Trash2 className="h-3 w-3" />
                             </Button>
                           </div>
@@ -148,10 +219,14 @@ export default function CartPage() {
             {/* Order Summary */}
             <Card className="border border-gray-200 bg-gray-50">
               <CardContent className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-3">Order Summary</h3>
+                <h3 className="font-semibold text-gray-900 mb-3">
+                  Order Summary
+                </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal ({cartItems.length} items)</span>
+                    <span className="text-gray-600">
+                      Subtotal ({cartItems.length} items)
+                    </span>
                     <span className="font-medium" data-testid="text-subtotal">
                       {formatPrice(calculateTotal())}
                     </span>
@@ -163,13 +238,20 @@ export default function CartPage() {
                   <div className="border-t pt-2 mt-2">
                     <div className="flex justify-between">
                       <span className="font-semibold text-gray-900">Total</span>
-                      <span className="font-bold text-lg text-primary" data-testid="text-total">
+                      <span
+                        className="font-bold text-lg text-primary"
+                        data-testid="text-total"
+                      >
                         {formatPrice(calculateTotal())}
                       </span>
                     </div>
                   </div>
                 </div>
-                <Button className="w-full mt-4 bg-primary text-white hover:bg-primary/90" onClick={handleCheckout} data-testid="button-checkout">
+                <Button
+                  className="w-full mt-4 bg-primary text-white hover:bg-primary/90"
+                  onClick={handleCheckout}
+                  data-testid="button-checkout"
+                >
                   Proceed to Checkout
                 </Button>
               </CardContent>

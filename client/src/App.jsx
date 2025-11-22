@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import ProductsPage from "@/pages/events";
 import CartPage from "@/pages/cart";
 import FavoritesPage from "@/pages/favorites";
+import NotificationsPage from "@/pages/notifications";
 import ProfilePage from "@/pages/profile";
 import ProductDetailsPage from "@/pages/product-details";
 import NotFound from "@/pages/not-found";
@@ -19,6 +20,8 @@ function Router() {
       <Route path="/favorites" component={FavoritesPage} />
       <Route path="/profile" component={ProfilePage} />
       <Route path="/product/:id" component={ProductDetailsPage} />
+      <Route path="/notifications" component={NotificationsPage} />
+
       <Route component={NotFound} />
     </Switch>
   );

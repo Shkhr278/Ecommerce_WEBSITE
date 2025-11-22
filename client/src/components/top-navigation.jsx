@@ -1,6 +1,13 @@
 import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Store, ShoppingCart, Heart, User } from "lucide-react";
+import {
+  Menu,
+  Home,
+  Bell,
+  User,
+  ShoppingCart,
+  Heart,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -8,28 +15,59 @@ import { cn } from "@/lib/utils";
 export function TopNavigation() {
   const [location] = useLocation();
 
+  // Notifications
+  const { data: notifications = [] } = useQuery({
+    queryKey: ["/api/notifications"],
+  });
+  const notificationsCount = Array.isArray(notifications)
+    ? notifications.length
+    : 0;
+
+  // Cart items
   const { data: cartItems = [] } = useQuery({
     queryKey: ["/api/cart"],
   });
-
   const cartItemCount = Array.isArray(cartItems) ? cartItems.length : 0;
 
   const navItems = [
-    { icon: Store, label: "Products", path: "/", testId: "nav-products" },
-    { icon: ShoppingCart, label: "Cart", path: "/cart", testId: "nav-cart", badge: cartItemCount > 0 ? cartItemCount : null },
-    { icon: Heart, label: "Favorites", path: "/favorites", testId: "nav-favorites" },
+    { icon: Home, label: "Home", path: "/", testId: "nav-home" },
+    {
+      icon: ShoppingCart,
+      label: "Cart",
+      path: "/cart",
+      testId: "nav-cart",
+      badge: cartItemCount > 0 ? cartItemCount : null,
+    },
+    {
+      icon: Heart,
+      label: "Favorites",
+      path: "/favorites",
+      testId: "nav-favorites",
+    },
+    {
+      icon: Bell,
+      label: "Notifications",
+      path: "/notifications",
+      testId: "nav-notifications",
+      badge: notificationsCount > 0 ? notificationsCount : null,
+    },
+    
     { icon: User, label: "Profile", path: "/profile", testId: "nav-profile" },
   ];
 
   return (
-    <nav className="hidden lg:flex fixed top-0 left-1/2 transform -translate-x-1/2 w-full responsive-container bg-white border-b border-gray-200 px-6 py-4 z-20">
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center space-x-2">
-          <Store className="h-8 w-8 text-primary" />
-          <h1 className="text-2xl font-bold text-gray-900">E-Commerce</h1>
+    <nav className="hidden lg:flex fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-6 py-2 shadow-sm z-20">
+      <div className="flex items-center justify-between max-w-7xl mx-auto w-full">
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" className="p-2">
+            <Menu className="h-6 w-6 text-gray-700" />
+          </Button>
+          <h1 className="text-xl font-semibold text-gray-900 cursor-pointer">
+            Local Spark
+          </h1>
         </div>
 
-        <div className="flex items-center space-x-1">
+        <div className="flex space-x-6">
           {navItems.map(({ icon: Icon, label, path, testId, badge }) => {
             const isActive = location === path;
 
@@ -39,7 +77,9 @@ export function TopNavigation() {
                   variant="ghost"
                   className={cn(
                     "flex items-center space-x-2 px-4 py-2 h-auto transition-colors relative",
-                    isActive ? "text-primary bg-primary/10" : "text-gray-600 hover:text-primary hover:bg-primary/5"
+                    isActive
+                      ? "text-primary bg-primary/10"
+                      : "text-gray-600 hover:text-primary hover:bg-primary/5"
                   )}
                   data-testid={testId}
                 >

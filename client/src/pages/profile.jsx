@@ -2,6 +2,7 @@ import { User, Settings, Bell, HelpCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { TopNavigation } from "@/components/top-navigation";
 
 export default function ProfilePage() {
   const menuItems = [
@@ -12,31 +13,46 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen max-w-md mx-auto bg-white shadow-lg relative">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-6">
-        <div className="flex items-center space-x-3">
-          <User className="text-primary h-6 w-6" />
-          <h1 className="text-xl font-bold text-gray-900">Profile</h1>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white">
+      {/* Fixed Quora-style top nav */}
+      <TopNavigation />
 
-      {/* Content */}
-      <main className="flex-1 overflow-y-auto pb-20 custom-scrollbar">
-        <div className="px-4 py-4">
+      {/* Page container starts below the fixed navbar */}
+      <div className="max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 lg:pb-8 relative">
+        {/* Page header (no sticky, no top:0) */}
+        <header className="bg-white border-b border-gray-200 py-4 mb-4">
+          <div className="flex items-center space-x-3">
+            <User className="text-primary h-6 w-6" />
+            <h1 className="text-xl font-bold text-gray-900">Profile</h1>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="custom-scrollbar">
           {/* User Info */}
           <Card className="mb-6">
             <CardContent className="p-6 text-center">
               <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="h-10 w-10 text-primary" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-1" data-testid="text-user-name">
+              <h2
+                className="text-lg font-semibold text-gray-900 mb-1"
+                data-testid="text-user-name"
+              >
                 Business Owner
               </h2>
-              <p className="text-sm text-gray-500" data-testid="text-user-email">
+              <p
+                className="text-sm text-gray-500"
+                data-testid="text-user-email"
+              >
                 owner@business.com
               </p>
-              <Button variant="outline" size="sm" className="mt-3" data-testid="button-edit-profile">
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                data-testid="button-edit-profile"
+              >
                 Edit Profile
               </Button>
             </CardContent>
@@ -49,7 +65,11 @@ export default function ProfilePage() {
                 <CardContent className="p-0">
                   <Button
                     variant="ghost"
-                    className={`w-full justify-start p-4 h-auto ${variant === "destructive" ? "text-red-600 hover:text-red-700 hover:bg-red-50" : ""}`}
+                    className={`w-full justify-start p-4 h-auto ${
+                      variant === "destructive"
+                        ? "text-red-600 hover:text-red-700 hover:bg-red-50"
+                        : ""
+                    }`}
                     data-testid={testId}
                   >
                     <Icon className="h-5 w-5 mr-3" />
@@ -65,8 +85,8 @@ export default function ProfilePage() {
             <p className="text-xs text-gray-400 mb-1">BizEvents App</p>
             <p className="text-xs text-gray-400">Version 1.0.0</p>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
 
       <BottomNavigation />
     </div>
