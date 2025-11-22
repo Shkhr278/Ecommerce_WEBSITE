@@ -59,8 +59,8 @@ app.use("/api", routes);
 // health check
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8000;
 
 server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port} ✅`);
 });
