@@ -168,7 +168,7 @@ routes.get("/favorites/:productId/check", async (req, res) => {
 });
 
 
-notificationsRouter.get("/notifications", (req, res) => {
+routes.get("/notifications", (req, res) => {
   const notifications = [
     {
       id: 1,
