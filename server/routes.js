@@ -188,7 +188,7 @@ routes.get("/notifications", (req, res) => {
     },
   ];
   res.json(notifications);
-});notificationsRouter.post("/notifications/mark-read", (req, res) => {
+});routes.post("/notifications/mark-read", (req, res) => {
   // In a real app, you would update the notification status in the database
   res.json({ success: true });
 });
