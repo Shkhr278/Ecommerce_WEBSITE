@@ -6,19 +6,15 @@ import { createServer } from "http";
 import { WebSocketServer } from "ws";
 import cors from "cors";
 
-// Main API router (this is the one that already has /products, /cart, /favorites, etc.)
 import { routes } from "./routes.js";
-
-// Notifications router (new, lives in server/api/notifications.js, see below)
-import { notificationsRouter } from "./api/notifications.js";
 
 const app = express();
 const server = createServer(app);
 
-// trust proxy so secure cookies work on Render
+// Trust proxy so secure cookies work on Render
 app.set("trust proxy", 1);
 
-// CORS: allow your Vercel frontend
+// CORS – allow the Vercel frontend
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN, // e.g. "https://localspark.vercel.app"
@@ -26,10 +22,9 @@ app.use(
   })
 );
 
-// JSON body parsing
 app.use(express.json());
 
-// SESSION CONFIG – required for cart/favorites to persist
+// Session config – cart/favorites live here
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your-secret-key",
@@ -47,16 +42,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Mount main API routes (products, cart, favorites, etc.)
+// Mount API
 app.use("/api", routes);
-
-// Mount notifications API
-app.use("/api", notificationsRouter);
 
 // Health check
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
-// WebSocket server (optional)
+// WebSocket echo server (optional)
 const wss = new WebSocketServer({ noServer: true });
 
 server.on("upgrade", (request, socket, head) => {
@@ -76,7 +68,7 @@ wss.on("connection", (ws) => {
     try {
       ws.send("Echo: " + message.toString());
     } catch {
-      // ignore send errors
+      // ignore
     }
   });
 
