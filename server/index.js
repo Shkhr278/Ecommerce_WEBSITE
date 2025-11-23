@@ -1,20 +1,24 @@
+// server/index.js
 import express from "express";
 import session from "express-session";
 import passport from "passport";
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
-import routes from "./routes.js"; // ← your main API router
 import cors from "cors";
+
+// Main API router (this is the one that already has /products, /cart, /favorites, etc.)
+import { routes } from "./routes.js";
+
+// Notifications router (new, lives in server/api/notifications.js, see below)
+import { notificationsRouter } from "./api/notifications.js";
 
 const app = express();
 const server = createServer(app);
 
-// IMPORTANT: trust proxy so secure cookies work behind Render's proxy
+// trust proxy so secure cookies work on Render
 app.set("trust proxy", 1);
 
-// WebSocket server (simple echo on /ws)
-const wss = new WebSocketServer({ noServer: true });
-
+// CORS: allow your Vercel frontend
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN, // e.g. "https://localspark.vercel.app"
@@ -22,10 +26,10 @@ app.use(
   })
 );
 
-// middleware
+// JSON body parsing
 app.use(express.json());
 
-// SESSION CONFIG – this is what makes cart/favorites persist
+// SESSION CONFIG – required for cart/favorites to persist
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your-secret-key",
@@ -43,13 +47,18 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// mount API routes
+// Mount main API routes (products, cart, favorites, etc.)
 app.use("/api", routes);
 
-// health check
+// Mount notifications API
+app.use("/api", notificationsRouter);
+
+// Health check
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
-// WebSocket upgrade
+// WebSocket server (optional)
+const wss = new WebSocketServer({ noServer: true });
+
 server.on("upgrade", (request, socket, head) => {
   const { url } = request;
   if (url && url.startsWith("/ws")) {
