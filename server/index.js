@@ -3,7 +3,7 @@ import session from "express-session";
 import passport from "passport";
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
-import { routes } from "./routes.js"; // ← your main API router
+import routes from "./routes.js"; // ← your main API router
 import cors from "cors";
 
 const app = express();
