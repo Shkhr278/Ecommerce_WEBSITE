@@ -3,7 +3,7 @@ import session from "express-session";
 import passport from "passport";
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
-import { routes } from "./routes.js";
+import { routes } from "./api/routes.js"; // ← your main API router
 import cors from "cors";
 
 const app = express();
@@ -34,9 +34,6 @@ app.use(
     cookie: {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-      // For local dev, cookies can be non-secure, sameSite "lax"
-      // For production (Vercel + Render, different domains),
-      // we MUST allow cross-site cookies:
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
