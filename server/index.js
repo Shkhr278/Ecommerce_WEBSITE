@@ -1,20 +1,21 @@
 // server/index.js
 import express from "express";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import passport from "passport";
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
 import cors from "cors";
 
-import { routes } from "./routes.js";
+import routes from "./api/routes.js";
 
 const app = express();
 const server = createServer(app);
 
-// Trust proxy so secure cookies work on Render
+// IMPORTANT: trust proxy so secure cookies work behind Render's proxy
 app.set("trust proxy", 1);
 
-// CORS – allow the Vercel frontend
+// CORS – allow frontend (Vercel) to send cookies
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN, // e.g. "https://localspark.vercel.app"
@@ -22,17 +23,27 @@ app.use(
   })
 );
 
+// JSON body
 app.use(express.json());
 
-// Session config – cart/favorites live here
+// ---- SESSION CONFIG (Mongo Atlas) ----
+if (!process.env.MONGO_URL) {
+  console.error("MONGO_URL is not set – session store will fail!");
+}
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "your-secret-key",
+    secret: process.env.SESSION_SECRET || "dev-secret",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URL,
+      ttl: 60 * 60 * 24 * 7, // 7 days
+    }),
     cookie: {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      // For production (Render + Vercel, different domains), allow cross-site cookies
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
@@ -42,13 +53,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Mount API
+// ---- API routes ----
 app.use("/api", routes);
 
 // Health check
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
-// WebSocket echo server (optional)
+// ---- WebSocket setup (optional, like before) ----
 const wss = new WebSocketServer({ noServer: true });
 
 server.on("upgrade", (request, socket, head) => {
@@ -68,7 +79,7 @@ wss.on("connection", (ws) => {
     try {
       ws.send("Echo: " + message.toString());
     } catch {
-      // ignore
+      // ignore send errors
     }
   });
 
@@ -77,8 +88,8 @@ wss.on("connection", (ws) => {
   });
 });
 
+// Start server
 const port = process.env.PORT || 8000;
-
 server.listen(port, () => {
   console.log(`Server running on port ${port} ✅`);
 });
