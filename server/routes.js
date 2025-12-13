@@ -1,7 +1,8 @@
-// server/api/router.js
 import express from "express";
+import { z } from "zod";
+import { storage } from "./storage.js";
 
-const router = express.Router();
+export const routes = express.Router();
 
 /**
  * Note:
@@ -15,7 +16,7 @@ function getUserId(req) {
 }
 
 // GET /api/products
-router.get("/products", async (req, res) => {
+routes.get("/products", async (req, res) => {
   try {
     const filters = {};
     if (req.query.category) filters.category = String(req.query.category);
@@ -33,7 +34,7 @@ router.get("/products", async (req, res) => {
 });
 
 // GET /api/products/:id
-router.get("/products/:id", async (req, res) => {
+routes.get("/products/:id", async (req, res) => {
   try {
     const product = await storage.getProduct(String(req.params.id));
     if (!product) return res.status(404).json({ error: "Product not found" });
@@ -45,7 +46,7 @@ router.get("/products/:id", async (req, res) => {
 });
 
 // GET /api/cart
-router.get("/cart", async (req, res) => {
+routes.get("/cart", async (req, res) => {
   try {
     const userId = getUserId(req);
     const cartItems = await storage.getCartItems(userId);
@@ -57,7 +58,7 @@ router.get("/cart", async (req, res) => {
 });
 
 // POST /api/cart
-router.post("/cart", async (req, res) => {
+routes.post("/cart", async (req, res) => {
   const schema = z.object({
     productId: z.string(),
     quantity: z.number().min(1).optional().default(1),
@@ -76,7 +77,7 @@ router.post("/cart", async (req, res) => {
 });
 
 // PUT /api/cart/:productId
-router.put("/cart/:productId", async (req, res) => {
+routes.put("/cart/:productId", async (req, res) => {
   const schema = z.object({
     quantity: z.number().min(1),
   });
@@ -95,7 +96,7 @@ router.put("/cart/:productId", async (req, res) => {
 });
 
 // DELETE /api/cart/:productId
-router.delete("/cart/:productId", async (req, res) => {
+routes.delete("/cart/:productId", async (req, res) => {
   try {
     const userId = getUserId(req);
     const success = await storage.removeFromCart(userId, String(req.params.productId));
@@ -108,7 +109,7 @@ router.delete("/cart/:productId", async (req, res) => {
 });
 
 // GET /api/favorites
-router.get("/favorites", async (req, res) => {
+routes.get("/favorites", async (req, res) => {
   try {
     const userId = getUserId(req);
     const favorites = await storage.getUserFavorites(userId);
@@ -120,7 +121,7 @@ router.get("/favorites", async (req, res) => {
 });
 
 // POST /api/favorites
-router.post("/favorites", async (req, res) => {
+routes.post("/favorites", async (req, res) => {
   const schema = z.object({
     productId: z.string(),
   });
@@ -142,7 +143,7 @@ router.post("/favorites", async (req, res) => {
 });
 
 // DELETE /api/favorites/:productId
-router.delete("/favorites/:productId", async (req, res) => {
+routes.delete("/favorites/:productId", async (req, res) => {
   try {
     const userId = getUserId(req);
     const success = await storage.removeFavorite(userId, String(req.params.productId));
@@ -155,7 +156,7 @@ router.delete("/favorites/:productId", async (req, res) => {
 });
 
 // GET /api/favorites/:productId/check
-router.get("/favorites/:productId/check", async (req, res) => {
+routes.get("/favorites/:productId/check", async (req, res) => {
   try {
     const userId = getUserId(req);
     const isFavorite = await storage.isFavorite(userId, String(req.params.productId));
@@ -167,7 +168,7 @@ router.get("/favorites/:productId/check", async (req, res) => {
 });
 
 
-router.get("/notifications", (req, res) => {
+routes.get("/notifications", (req, res) => {
   const notifications = [
     {
       id: 1,
@@ -186,8 +187,12 @@ router.get("/notifications", (req, res) => {
       read: false,
     },
   ];
-
   res.json(notifications);
+});routes.post("/notifications/mark-read", (req, res) => {
+  // In a real app, you would update the notification status in the database
+  res.json({ success: true });
 });
 
-export default router;
+
+
+export default routes;
