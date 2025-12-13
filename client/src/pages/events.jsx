@@ -40,7 +40,8 @@ export default function ProductsPage() {
   }
 
   const productsUrl =
-    "/api/products" + (queryParams.toString() ? `?${queryParams.toString()}` : "");
+    "/api/products" +
+    (queryParams.toString() ? `?${queryParams.toString()}` : "");
 
   const {
     data: products = [],
@@ -48,6 +49,7 @@ export default function ProductsPage() {
     error: productsError,
   } = useQuery({
     queryKey: [productsUrl],
+    enabled: true,
   });
 
   const handleFilterClick = (filterId) => {
@@ -75,7 +77,9 @@ export default function ProductsPage() {
             <Home className="h-6 w-6 text-primary" />
             <div>
               <h1 className="text-lg font-semibold text-gray-900">Topics</h1>
-              <p className="text-xs text-gray-500">Discover curated topics and products</p>
+              <p className="text-xs text-gray-500">
+                Discover curated topics and products
+              </p>
             </div>
           </div>
 
@@ -112,7 +116,9 @@ export default function ProductsPage() {
         {/* Products Feed */}
         <main className="py-4">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Featured Topics</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Featured Topics
+            </h2>
             <span
               className="text-sm text-gray-500"
               data-testid="text-products-count"

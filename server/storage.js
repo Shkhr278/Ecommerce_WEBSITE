@@ -9,8 +9,10 @@ class MemStorage {
   constructor() {
     this.users = new Map();
     this.products = new Map();
+    this.events = new Map();
     this.cartItems = new Map(); // key: id -> { id, userId, productId, quantity, createdAt }
     this.favorites = new Map(); // key: id -> { id, userId, productId, createdAt }
+    this.registrations = new Map();
     this.seedData();
   }
 
@@ -113,7 +115,109 @@ class MemStorage {
       },
     ];
 
+    const sampleEvents = [
+      {
+        id: "evt-1",
+        title: "Tech Summit 2024",
+        description:
+          "Annual tech conference featuring keynotes from industry leaders, workshops, and networking opportunities.",
+        category: "Technology",
+        imageUrl:
+          "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400",
+        price: "49.99",
+        startDate: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        endDate: new Date(Date.now() + 32 * 24 * 60 * 60 * 1000).toISOString(),
+        location: "San Francisco, CA",
+        address: "Moscone Center, 747 Howard St",
+        latitude: "37.7839",
+        longitude: "-122.3988",
+        organizerName: "TechEvents Inc",
+        organizerEmail: "hello@techevents.com",
+        maxAttendees: 500,
+        currentAttendees: 245,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "evt-2",
+        title: "Web Development Workshop",
+        description:
+          "Hands-on workshop covering modern web development practices, React, and best practices.",
+        category: "Education",
+        imageUrl:
+          "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400",
+        price: "0",
+        startDate: new Date(
+          Date.now() + 14 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        endDate: new Date(
+          Date.now() + 14 * 24 * 60 * 60 * 1000 + 8 * 60 * 60 * 1000
+        ).toISOString(),
+        location: "New York, NY",
+        address: "Tech Hub NYC, 123 Broadway",
+        latitude: "40.7128",
+        longitude: "-74.0060",
+        organizerName: "Code Academy",
+        organizerEmail: "workshops@codeacademy.com",
+        maxAttendees: 50,
+        currentAttendees: 32,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "evt-3",
+        title: "Startup Networking Event",
+        description:
+          "Meet founders, investors, and entrepreneurs. Great opportunity to showcase your startup or find co-founders.",
+        category: "Networking",
+        imageUrl:
+          "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400",
+        price: "25.00",
+        startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        endDate: new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000
+        ).toISOString(),
+        location: "Austin, TX",
+        address: "Innovation District, 200 Congress Ave",
+        latitude: "30.2672",
+        longitude: "-97.7431",
+        organizerName: "Austin Startup Scene",
+        organizerEmail: "events@austinstartups.com",
+        maxAttendees: 100,
+        currentAttendees: 67,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "evt-4",
+        title: "AI & Machine Learning Summit",
+        description:
+          "Deep dive into AI/ML trends, practical applications, and future of artificial intelligence.",
+        category: "Science",
+        imageUrl:
+          "https://images.unsplash.com/photo-1559056199-641a0ac8b3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400",
+        price: "79.99",
+        startDate: new Date(
+          Date.now() + 60 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        endDate: new Date(Date.now() + 61 * 24 * 60 * 60 * 1000).toISOString(),
+        location: "Seattle, WA",
+        address: "Convention Center, 800 Convention Pl",
+        latitude: "47.6205",
+        longitude: "-122.3493",
+        organizerName: "AI Community",
+        organizerEmail: "contact@aicommunity.com",
+        maxAttendees: 300,
+        currentAttendees: 156,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      },
+    ];
+
     sampleProducts.forEach((p) => this.products.set(p.id, p));
+    sampleEvents.forEach((e) => this.events.set(e.id, e));
   }
 
   // Users
@@ -148,19 +252,31 @@ class MemStorage {
 
     if (filters) {
       if (filters.category && filters.category !== "all") {
-        products = products.filter((p) => String(p.category).toLowerCase() === String(filters.category).toLowerCase());
+        products = products.filter(
+          (p) =>
+            String(p.category).toLowerCase() ===
+            String(filters.category).toLowerCase()
+        );
       }
 
       if (filters.maxPrice !== undefined && !Number.isNaN(filters.maxPrice)) {
-        products = products.filter((p) => parseFloat(p.price) <= Number(filters.maxPrice));
+        products = products.filter(
+          (p) => parseFloat(p.price) <= Number(filters.maxPrice)
+        );
       }
 
       if (filters.minPrice !== undefined && !Number.isNaN(filters.minPrice)) {
-        products = products.filter((p) => parseFloat(p.price) >= Number(filters.minPrice));
+        products = products.filter(
+          (p) => parseFloat(p.price) >= Number(filters.minPrice)
+        );
       }
 
       if (filters.brand) {
-        products = products.filter((p) => String(p.brand).toLowerCase() === String(filters.brand).toLowerCase());
+        products = products.filter(
+          (p) =>
+            String(p.brand).toLowerCase() ===
+            String(filters.brand).toLowerCase()
+        );
       }
 
       if (filters.search) {
@@ -171,13 +287,16 @@ class MemStorage {
             String(p.description).toLowerCase().includes(q) ||
             String(p.category).toLowerCase().includes(q) ||
             (p.brand && String(p.brand).toLowerCase().includes(q)) ||
-            (Array.isArray(p.tags) && p.tags.some((t) => t.toLowerCase().includes(q)))
+            (Array.isArray(p.tags) &&
+              p.tags.some((t) => t.toLowerCase().includes(q)))
         );
       }
     }
 
     // sort by rating desc
-    products.sort((a, b) => parseFloat(b.rating || "0") - parseFloat(a.rating || "0"));
+    products.sort(
+      (a, b) => parseFloat(b.rating || "0") - parseFloat(a.rating || "0")
+    );
 
     return products;
   }
@@ -199,6 +318,62 @@ class MemStorage {
     };
     this.products.set(id, product);
     return product;
+  }
+
+  // Events
+  async getEvents(filters) {
+    let events = Array.from(this.events.values()).filter((e) => e.isActive);
+
+    if (filters) {
+      if (filters.category && filters.category !== "all") {
+        events = events.filter(
+          (e) =>
+            String(e.category).toLowerCase() ===
+            String(filters.category).toLowerCase()
+        );
+      }
+
+      if (filters.maxPrice !== undefined && !Number.isNaN(filters.maxPrice)) {
+        events = events.filter(
+          (e) => parseFloat(e.price) <= Number(filters.maxPrice)
+        );
+      }
+
+      if (filters.minPrice !== undefined && !Number.isNaN(filters.minPrice)) {
+        events = events.filter(
+          (e) => parseFloat(e.price) >= Number(filters.minPrice)
+        );
+      }
+
+      if (filters.search) {
+        const q = String(filters.search).toLowerCase();
+        events = events.filter(
+          (e) =>
+            String(e.title).toLowerCase().includes(q) ||
+            String(e.description).toLowerCase().includes(q) ||
+            String(e.category).toLowerCase().includes(q)
+        );
+      }
+    }
+
+    return events.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  }
+
+  async getEvent(id) {
+    return this.events.get(String(id));
+  }
+
+  async createEvent(insertEvent) {
+    const id = randomUUID();
+    const event = {
+      id,
+      ...insertEvent,
+      isActive: true,
+      currentAttendees: 0,
+      createdAt: new Date().toISOString(),
+    };
+    this.events.set(id, event);
+    return event;
   }
 
   // Cart
@@ -225,7 +400,13 @@ class MemStorage {
     }
 
     const id = randomUUID();
-    const cartItem = { id, userId, productId, quantity, createdAt: new Date().toISOString() };
+    const cartItem = {
+      id,
+      userId,
+      productId,
+      quantity,
+      createdAt: new Date().toISOString(),
+    };
     this.cartItems.set(id, cartItem);
     return cartItem;
   }
@@ -271,7 +452,11 @@ class MemStorage {
 
   async addFavorite(insertFavorite) {
     const id = randomUUID();
-    const favorite = { id, ...insertFavorite, createdAt: new Date().toISOString() };
+    const favorite = {
+      id,
+      ...insertFavorite,
+      createdAt: new Date().toISOString(),
+    };
     this.favorites.set(id, favorite);
     return favorite;
   }
@@ -291,6 +476,92 @@ class MemStorage {
       if (fav.userId === userId && fav.productId === productId) return true;
     }
     return false;
+  }
+
+  // Registrations
+  async getUserRegistrations(userId) {
+    const regs = [];
+    for (const reg of this.registrations.values()) {
+      if (reg.userId === userId) {
+        const event = this.events.get(reg.eventId);
+        if (event && event.isActive) regs.push({ ...reg, event });
+      }
+    }
+    return regs;
+  }
+
+  async registerForEvent(insertReg) {
+    const id = randomUUID();
+    const registration = {
+      id,
+      ...insertReg,
+      createdAt: new Date().toISOString(),
+    };
+    this.registrations.set(id, registration);
+    return registration;
+  }
+
+  async getRegistration(userId, eventId) {
+    for (const reg of this.registrations.values()) {
+      if (reg.userId === userId && reg.eventId === eventId) return reg;
+    }
+    return undefined;
+  }
+
+  async cancelRegistration(userId, eventId) {
+    for (const [id, reg] of this.registrations.entries()) {
+      if (reg.userId === userId && reg.eventId === eventId) {
+        this.registrations.delete(id);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Search
+  async searchProducts(query) {
+    const q = String(query).toLowerCase();
+    return Array.from(this.products.values())
+      .filter(
+        (p) =>
+          p.isActive &&
+          (String(p.name).toLowerCase().includes(q) ||
+            String(p.description).toLowerCase().includes(q) ||
+            String(p.category).toLowerCase().includes(q))
+      )
+      .slice(0, 10);
+  }
+
+  async searchEvents(query) {
+    const q = String(query).toLowerCase();
+    return Array.from(this.events.values())
+      .filter(
+        (e) =>
+          e.isActive &&
+          (String(e.title).toLowerCase().includes(q) ||
+            String(e.description).toLowerCase().includes(q) ||
+            String(e.category).toLowerCase().includes(q))
+      )
+      .slice(0, 10);
+  }
+
+  // Categories
+  async getProductCategories() {
+    const categories = new Set(
+      Array.from(this.products.values())
+        .filter((p) => p.isActive)
+        .map((p) => p.category)
+    );
+    return Array.from(categories).sort();
+  }
+
+  async getEventCategories() {
+    const categories = new Set(
+      Array.from(this.events.values())
+        .filter((e) => e.isActive)
+        .map((e) => e.category)
+    );
+    return Array.from(categories).sort();
   }
 }
 
